@@ -146,6 +146,13 @@ cdef ndarray _ndarray_reshape(ndarray self, tuple shape, order):
         return _reshape(self.transpose(), shape[::-1]).transpose()
 
 
+class ndarray _ndarray_resize(ndarray, self, tuple shape):
+    if len(shape) == 1 and cpython.PySequence_Check(shape[0]):
+        shape = tuple(shape[0])
+
+    return _resize(self, shape)
+
+
 cdef ndarray _ndarray_transpose(ndarray self, tuple axes):
     cdef ndarray ret
     cdef vector.vector[Py_ssize_t] vec_axes, a_axes, temp_axes
@@ -344,6 +351,30 @@ cpdef ndarray _reshape(ndarray self, vector.vector[Py_ssize_t] shape):
     # TODO(niboshi): Confirm update_x_contiguity flags
     newarray._set_shape_and_strides(shape, strides, False, True)
     return newarray
+
+
+cpdef ndarray _resize(ndarray self, vector.vector[Py_ssize_t] shape, bool refcheck):
+    cdef ndarray newarray
+    a = self.ravel()
+    n_elements = len(a)
+    total_size = internal.prod(new_shape)
+    if n_elements == 0 or total_size == 0:
+        newarray = ndarray(shape, a.dtype)
+        newarray.fill(0)
+        return newarray
+
+    n_copies = int(total_size / n_elements)
+    extra = total_size % n_elements
+
+    if extra != 0:
+        n_copies = n_copies + 1
+        extra = n_elements - extra
+
+    a = _concatenate((a,) * n_copies, 0, (n_elements * n_copies,))
+    if extra > 0:
+        a = a[:-extra]
+
+    return _reshape(a, new_shape)
 
 
 cpdef ndarray _transpose(ndarray self, vector.vector[Py_ssize_t] axes):

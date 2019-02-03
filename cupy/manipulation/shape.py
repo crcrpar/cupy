@@ -33,6 +33,23 @@ def reshape(a, newshape, order='C'):
     return a.reshape(newshape, order=order)
 
 
+def resize(a, new_shape):
+    """Return a new array with the specified shape.
+
+    Args:
+        a (cupy.ndarray): Array to be resized.
+        new_shape (int or tuple of ints): The shape of the resized array.
+
+    Returns:
+        cupy.ndarray: A reshaped array formed from the data
+                      in the old array of ``a``.
+
+    .. seealso:: :func:`numpy.resize`
+
+    """
+    return a.resize(new_shape)
+
+
 def ravel(a, order='C'):
     """Returns a flattened array.
 

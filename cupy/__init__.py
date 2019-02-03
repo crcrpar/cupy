@@ -275,6 +275,7 @@ from cupy.manipulation.basic import copyto  # NOQA
 
 from cupy.manipulation.shape import ravel  # NOQA
 from cupy.manipulation.shape import reshape  # NOQA
+from cupy.manipulation.shape import resize  # NOQA
 
 from cupy.manipulation.transpose import moveaxis  # NOQA
 from cupy.manipulation.transpose import rollaxis  # NOQA

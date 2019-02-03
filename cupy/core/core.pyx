@@ -509,7 +509,16 @@ cdef class ndarray:
         """
         return _manipulation._ndarray_reshape(self, shape, order)
 
-    # TODO(okuta): Implement resize
+    cpdef ndarray resize(self, *shape, refcheck=True):
+        """Return a new array with the specified shape.
+
+        .. seealso::
+            :func:`cupy.resize` for full documentation,
+            :meth:`numpy.resize`
+
+        """
+        # TODO(crcrpar): Implement this.
+        return _manipulation._ndarray_resize(self, shape)
 
     def transpose(self, *axes):
         """Returns a view of the array with axes permuted.

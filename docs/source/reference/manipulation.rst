@@ -21,6 +21,7 @@ Changing array shape
    :nosignatures:
 
    cupy.reshape
+   cupy.resize
    cupy.ravel
 
 
