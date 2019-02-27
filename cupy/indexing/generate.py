@@ -302,10 +302,20 @@ def unravel_index(indices, dims, order='C'):
     return tuple(unraveled_coords)
 
 
-# TODO(okuta): Implement diag_indices
+def diag_indices(n, ndim=2):
+    from cupy.creation.ranges import arange
+    idx = arange(n)
+    return (idx,) * ndim
 
 
-# TODO(okuta): Implement diag_indices_from
+def diag_indices_from(arr):
+    if arr.ndim < 2:
+        raise ValueError('Input array must be at least 2-D')
+    _shape = arr.shape
+    diff = _shape[:-1] - _shape[1:]
+    if (diff != 0).any():
+        raise ValueError('All dimensions of input must be of equal length')
+    return diag_indices(arr.shape[0], arr.ndim)
 
 
 # TODO(okuta): Implement mask_indices
