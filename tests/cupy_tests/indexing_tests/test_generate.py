@@ -171,3 +171,45 @@ class TestUnravelIndex(unittest.TestCase):
     def test_invalid_dtype(self, xp, order, dtype):
         a = testing.shaped_arange((4, 3, 2), xp, dtype)
         xp.unravel_index(a, (6, 4), order=order)
+
+
+@testing.parameterize(*testing.product({
+    'n': [0, 2],
+    'ndim': [0, 2],
+}))
+@testing.gpu
+class TestDiagIndices(unittest.TestCase):
+
+    @testing.numpy_cupy_array_list_equal()
+    def test(self, xp):
+        return xp.diag_indices(self.n, self.ndim)
+
+
+@testing.parameterize(*testing.product({
+    'ndim': [0, 1, 2],
+}))
+@testing.gpu
+class TestDiagIndicesFrom(unittest.TestCase):
+
+    @testing.for_all_dtypes()
+    @testing.numpy_cupy_array_list_equal()
+    def test(self, xp, dtype):
+        if self.ndim >= 2:
+            x = testing.shaped_arange((3,) * self.ndim, xp, dtype)
+            return xp.diag_indices_from(x)
+        else:
+            # Just for passing tests
+            return xp.ones(()),
+
+    @testing.for_all_dtypes()
+    @testing.numpy_cupy_raises(accept_error=ValueError)
+    def test_shape_error(self, xp, dtype):
+        if self.ndim < 2:
+            # <2-D array
+            x = testing.shaped_arange((3,) * self.ndim, xp, dtype)
+            xp.diag_indices_from(x)
+        else:
+            # Array with the shape of different lengths
+            shape = (4,) + (3,) * (self.ndim - 1)
+            x = testing.shaped_arange(shape, xp, dtype)
+            xp.diag_indices_from(x)
