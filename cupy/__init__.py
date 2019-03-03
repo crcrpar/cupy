@@ -383,6 +383,8 @@ from cupy.indexing.generate import indices  # NOQA
 from cupy.indexing.generate import ix_  # NOQA
 from cupy.indexing.generate import r_  # NOQA
 from cupy.indexing.generate import unravel_index  # NOQA
+from cupy.indexing.generate import diag_indices  # NOQA
+from cupy.indexing.generate import diag_indices_from  # NOQA
 
 from cupy.indexing.indexing import choose  # NOQA
 from cupy.indexing.indexing import diagonal  # NOQA

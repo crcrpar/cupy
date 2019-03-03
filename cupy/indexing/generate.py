@@ -302,10 +302,42 @@ def unravel_index(indices, dims, order='C'):
     return tuple(unraveled_coords)
 
 
-# TODO(okuta): Implement diag_indices
+def diag_indices(n, ndim=2):
+    """Return the indices to access the main diagonal of an array.
+
+    Args:
+        n (int): The size, along each dimension, of the arrays for which
+            the returned indices can be used.
+        ndim (int): The number of dimensions.
+
+    Returns:
+        tuple of ndarrays:
+
+    .. seealso:: :func:`numpy.diag_indices`
+    """
+    idx = cupy.arange(n)
+    return (idx,) * ndim
 
 
-# TODO(okuta): Implement diag_indices_from
+def diag_indices_from(arr):
+    """Return the indices to access the main diagonal of an n-dimensional array.
+
+    Args:
+        arr (ndarray): An array, at least 2-D.
+
+    Returns:
+        tuple of ndarrays
+
+    .. seealso:: :func:`numpy.diag_indices_from`, :func:`cupy.diag_indices`
+    """
+    if arr.ndim < 2:
+        raise ValueError('Input array must be at least 2-D')
+    first_length = len(arr)
+    for i in arr.shape[1:]:
+        if i != first_length:
+            raise ValueError(
+                'All dimensions of input must be of equal length')
+    return diag_indices(first_length, arr.ndim)
 
 
 # TODO(okuta): Implement mask_indices
