@@ -750,7 +750,6 @@ def create_rnn_descriptor(hidden_size, num_layers, dropout_desc,
 def get_rnn_lin_layer_matrix_params(
         handle, rnn_desc, layer, x_desc, w_desc, core.ndarray w, lin_layer_id):
     cdef size_t ptr = 0
-    w_data_ptr = w.data.ptr
     mat_desc = cudnn.createFilterDescriptor()
     try:
         cudnn.getRNNLinLayerMatrixParams(
