@@ -147,6 +147,19 @@ cpdef enum:
 
     CUDNN_SAMPLER_BILINEAR = 0
 
+    CUDNN_ATTN_Q_WEIGHTS = 0
+    CUDNN_ATTN_K_WEIGHTS = 1
+    CUDNN_ATTN_V_WEIGHTS = 2
+    CUDNN_ATTn_O_WEIGHTS = 3
+
+    CUDNN_SEQDATA_TIME_DIM = 0
+    CUDNN_SEQDATA_BATCH_DIM = 1
+    CUDNN_SEQDATA_BEAM_DIM = 2
+    CUDNN_SEQDATA_VECT_DIM = 3
+
+    CUDNN_WGRAD_MODE_ADD = 0
+    CUDNN_WGRAD_MODE_SET = 1
+
     CUDNN_STATUS_SUCCESS = 0
     CUDNN_STATUS_RUNTIME_PREREQUISITE_MISSING = 11
     CUDNN_STATUS_RUNTIME_IN_PROGRESS = 12
@@ -523,6 +536,87 @@ cpdef dropoutBackward(
     size_t dyDesc, size_t dyData,
     size_t dxtDesc, size_t dxData,
     size_t reserveSpace, size_t reserveSpaceSizeInBytes)
+
+
+###############################################################################
+# Attention
+###############################################################################
+cpdef size_t createAttnDescriptor() except? 0
+cpdef destroyAttnDescriptor(size_t attnDesc)
+cpdef setAttnDescriptor(
+    size_t attnDesc, size_t queryMap, int nHeads, double smScaler,
+    size_t dataType, size_t computePrec, size_t mathType,
+    size_t attnDropoutDesc, size_t postDropoutDesc,
+    int qSize, int kSize, int vSize,
+    int qProjSize, int kProjSize, int vProjSize,
+    int qoMaxSeqLength, int kvMaxSeqLength, int maxBatchSize, int maxBeamSize)
+cpdef getAttnDescriptor(
+    size_t attnDesc, size_t queryMap, int nHeads, double smScaler,
+    size_t dataType, size_t computePrec, size_t mathType,
+    size_t attnDropoutDesc, size_t postDropoutDesc,
+    int qSize, int kSize, int vSize,
+    int qProjSize, int kProjSize, int vProjSize, int oProjSize,
+    int qoMaxSeqLength, int kvMaxSeqLength, int kvMaxSeqLength,
+    int maxBatchSize, int maxBeamSize)
+cpdef getMultiHeadAttnBuffers(
+    size_t handle, size_t attnDesc,
+    size_t weightSizeInBytes,
+    size_t workSpaceSizeInBytes,
+    size_t reserveSpaceSizeInBytes)
+cpdef getMultiHeadAttnWeights(
+    size_t handle, size_t attnDesc,
+    size_t wKind,
+    size_t weightSizeInBytes, size_t w,
+    size_t wDesc, size_t wAddr)
+cpdef multiHeadAttnForward(
+    size_t handle, size_t attnDesc,
+    int loWinIdx, int hiWinIdx,
+    int seqLengthArrayQRO, int seqLengthArrayKV,
+    size_t qDesc, size_t queries,
+    size_t residuals,
+    size_t kDesc, size_t, keys,
+    size_t vDesc, size_t values,
+    size_t oDesc, size_t out,
+    size_t weightSizeInBytes, size_t w,
+    size_t workSpaceSizeInBytes, size_t workSpace,
+    size_t reserveSpaceSizeInBytes, size_t reserveSpace)
+cpdef multiHeadAttnBackwardData(
+    size_t handle, size_t attnDesc,
+    int loWinIdx, int hiWinIdx,
+    int seqLengthArrayDQDO, int segLengthArrayDKV,
+    size_t doDesc, size_t dout,
+    size_t dqDesc, size_t dqueries,size_t queries,
+    size_t dkDesc, size_t dkeys,size_t keys,
+    size_t dvDesc, size_t dvalues,size_t values,
+    size_t weightSizeInBytes, size_t w,
+    size_t workSpacesizeInBytes, size_t workSpace,
+    size_t reserveSpaceSizeInBytes, size_t reserveSpace)
+cpdef multiHeadAttnBackwardWeights(
+    size_t handle, size_t attnDesc, size_t addGrad,
+    size_t qDesc, size_t queries,
+    size_t kDesc, size_t keys,
+    size_t vDesc, size_t values,
+    size_t doDesc, size_t dout,
+    size_t weightSizeInBytes, size_t w, size_t dw,
+    size_t workSpaceSizeInBytes, size_t workSpace,
+    size_t reserveSpaceSizeInBytes, size_t reserveSpace)
+
+
+###############################################################################
+# Sequential data
+###############################################################################
+cpdef size_t createSeqDataDescriptor() except? 0
+cpdef destroySeqDataDescriptor(size_t seqDataDesc)
+cpdef setSeqDataDescriptor(
+    size_t seqDataDesc, size_t dataType,
+    int nbDims, const int dimA[], size_t axes[],
+    size_t seqLengthArraySize, int seqLengthArray[], size_t paddingFill)
+cpdef getSeqDataDescriptor(
+    size_t seqDataDesc, size_t dataType,
+    int nbDims, int nbDimsRequested, int dimA[],
+    size_t seqLengthArraySize,
+    ize_t seqLengthSizeRequested,
+    int seqLengthArray[], size_t paddingFill)
 
 
 ###############################################################################
