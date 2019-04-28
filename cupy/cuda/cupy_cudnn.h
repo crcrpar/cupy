@@ -29,13 +29,19 @@ typedef enum {} cudnnConvolutionMode_t;
 typedef enum {} cudnnCTCLossAlgo_t;
 typedef enum {} cudnnDataType_t;
 typedef enum {} cudnnPoolingMode_t;
+typedef enum {} cudnnAttnQueryMap_t;
+typedef enum {} cudnnSeqDataAxis_t;
+typedef enum {} cudnnWgradMode_t;
+typedef enum {} cudnnMultiHeadAttnWeightKind_t;
 typedef enum {} cudnnSoftmaxAlgorithm_t;
 typedef enum {} cudnnSoftmaxMode_t;
 typedef enum {} cudnnTensorFormat_t;
 typedef enum {} cudnnErrQueryMode_t;
+typedef enum {} cudnnWgradMode_t;
 typedef struct cudnnRuntimeTag_t cudnnRuntimeTag_t;
 
 typedef void* cudnnConvolutionDescriptor_t;
+typedef void* cudnnSeqDataDescriptor_t;
 typedef void* cudnnCTCLossDescriptor_t;
 typedef void* cudnnFilterDescriptor_t;
 typedef void* cudnnHandle_t;
@@ -318,6 +324,61 @@ cudnnStatus_t cudnnActivationForward_v4(...) {
 cudnnStatus_t cudnnActivationBackward_v4(...) {
     return CUDNN_STATUS_NOT_SUPPORTED;
 }
+
+
+// Attention
+cudnnStatus_t cudnnCreateAttnDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnDestroyAttnDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnSetAttnDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnGetAttnDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnGetMultiAttnBuffers(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnGetMultiAttnWeights(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnMultiHeadAttnForward(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnMultiHeadAttnBackwardData(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnMultiHeadAttnBackwardWeights(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnCreateSeqDataDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnDestroySeqDataDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnGetSeqDataDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
+cudnnStatus_t cudnnDestroySeqDataDescriptor(...) {
+    return CUDNN_STATUS_SUCCESS;
+}
+
 
 // CTC
 cudnnStatus_t cudnnCreateCTCLossDescriptor(...) {
