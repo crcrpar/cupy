@@ -830,6 +830,10 @@ def get_rnn_lin_layer_bias_params(
     return bias
 
 
+# TODO(crcrpar): Implement Attention related methods.
+# TODO(crcrpar): Implement SeqData related methods.
+
+
 cdef class _DescriptorArray:
 
     cdef:

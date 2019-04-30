@@ -156,6 +156,7 @@ cpdef enum:
     CUDNN_SEQDATA_BATCH_DIM = 1
     CUDNN_SEQDATA_BEAM_DIM = 2
     CUDNN_SEQDATA_VECT_DIM = 3
+    CUDNN_SEQDATA_DIM_COUNT = 4
 
     CUDNN_WGRAD_MODE_ADD = 0
     CUDNN_WGRAD_MODE_SET = 1
@@ -613,9 +614,9 @@ cpdef setSeqDataDescriptor(
     size_t seqLengthArraySize, int seqLengthArray[], size_t paddingFill)
 cpdef getSeqDataDescriptor(
     size_t seqDataDesc, size_t dataType,
-    int nbDims, int nbDimsRequested, int dimA[],
+    int nbDims, int nbDimsRequested, int dimA[], size_t axes[],
     size_t seqLengthArraySize,
-    ize_t seqLengthSizeRequested,
+    size_t seqLengthSizeRequested,
     int seqLengthArray[], size_t paddingFill)
 
 

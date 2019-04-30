@@ -2192,7 +2192,7 @@ cpdef destroySeqDataDescriptor(size_t seqDataDesc):
 
 cpdef setSeqDataDescriptor(
         size_t seqDataDesc, size_t dataType,
-        int nbDims, const int dimA[], size_t axes[],
+        int nbDims, int dimA[], size_t axes[],
         size_t seqLengthArraySize, int seqLengthArray[], size_t paddingFill):
     status = cudnnSetSeqDataDescriptor(
         <SeqDataDescriptor>seqDataDesc, <DataType>dataType,
@@ -2204,7 +2204,7 @@ cpdef setSeqDataDescriptor(
 
 cpdef getSeqDataDescriptor(
         size_t seqDataDesc, size_t dataType,
-        int nbDims, int nbDimsRequested, int dimA[],
+        int nbDims, int nbDimsRequested, int dimA[], size_t axes[],
         size_t seqLengthArraySize,
         size_t seqLengthSizeRequested,
         int seqLengthArray[], size_t paddingFill):
