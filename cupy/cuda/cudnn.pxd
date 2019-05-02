@@ -610,14 +610,14 @@ cpdef size_t createSeqDataDescriptor() except? 0
 cpdef destroySeqDataDescriptor(size_t seqDataDesc)
 cpdef setSeqDataDescriptor(
     size_t seqDataDesc, size_t dataType,
-    int nbDims, const int dimA[], size_t axes[],
-    size_t seqLengthArraySize, int seqLengthArray[], size_t paddingFill)
+    int nbDims, size_t dimA, size_t axes,
+    size_t seqLengthArraySize, size_t seqLengthArray, size_t paddingFill)
 cpdef getSeqDataDescriptor(
     size_t seqDataDesc, size_t dataType,
-    int nbDims, int nbDimsRequested, int dimA[], size_t axes[],
+    int nbDims, int nbDimsRequested, size_t dimA, size_t axes,
     size_t seqLengthArraySize,
     size_t seqLengthSizeRequested,
-    int seqLengthArray[], size_t paddingFill)
+    size_t seqLengthArray, size_t paddingFill)
 
 
 ###############################################################################
