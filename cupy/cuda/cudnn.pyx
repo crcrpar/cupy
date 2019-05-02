@@ -2184,35 +2184,32 @@ cpdef size_t createSeqDataDescriptor() except? 0:
     check_status(status)
     return <size_t>status
 
-
 cpdef destroySeqDataDescriptor(size_t seqDataDesc):
     status = cudnnDestroyDropoutDescriptor(<SeqDataDescriptor>seqDataDesc)
     check_status(status)
 
-
 cpdef setSeqDataDescriptor(
         size_t seqDataDesc, size_t dataType,
-        int nbDims, int dimA[], size_t axes[],
-        size_t seqLengthArraySize, int seqLengthArray[], size_t paddingFill):
+        int nbDims, size_t dimA, size_t axes,
+        size_t seqLengthArraySize, size_t seqLengthArray, size_t paddingFill):
     status = cudnnSetSeqDataDescriptor(
         <SeqDataDescriptor>seqDataDesc, <DataType>dataType,
-        nbDims, <const int>dimA, <const SeqDataAxis>axes,
+        nbDims, <const int*>dimA, <const SeqDataAxis*>axes,
         seqLengthArraySize,
-        <const int>seqLengthArray, <void*>paddingFill)
+        <const int*>seqLengthArray, <void*>paddingFill)
     check_status(status)
-
 
 cpdef getSeqDataDescriptor(
         size_t seqDataDesc, size_t dataType,
-        int nbDims, int nbDimsRequested, int dimA[], size_t axes[],
+        int nbDims, int nbDimsRequested, size_t dimA, size_t axes,
         size_t seqLengthArraySize,
         size_t seqLengthSizeRequested,
-        int seqLengthArray[], size_t paddingFill):
+        size_t seqLengthArray, size_t paddingFill):
     status = cudnnGetSeqDataDescriptor(
         <const SeqDataDescriptor>seqDataDesc, <DataType*>dataType,
-        <int*>nbDims, nbDimsRequested, dimA, <SeqDataAxis>axes,
+        <int*>nbDims, nbDimsRequested, <int*>dimA, <SeqDataAxis*>axes,
         <size_t*>seqLengthArraySize, seqLengthSizeRequested,
-        seqLengthArray, <void*>paddingFill)
+        <int*>seqLengthArray, <void*>paddingFill)
     check_status(status)
 
 
