@@ -2114,3 +2114,54 @@ def batch_normalization_backward(
         ggamma = ggamma.astype(dtype)
         gbeta = gbeta.astype(dtype)
     return gx, ggamma, gbeta
+
+
+# TODO(crcrpar): Implement MultiHeadAttention forward&backard.
+cdef _create_attn_descriptor(
+        size_t attnDesc, size_t queryMap, int nHeads, double smScaler,
+        size_t dataType, size_t computePrec, size_t mathType,
+        size_t attnDropoutDesc, size_t postAttnDropoutDesc,
+        int qSize, int kSize, int vSize,
+        int qProjSize, int kProjSize, int vProjSize, int oProjSize,
+        int qoMaxLength, int kvMaxLength, int maxBatchSize, int maxBeamSize)
+
+
+def multiheadattention_forward(
+        core.ndarray query, core.ndarray key, core.ndarray value,
+        core.ndarray y, core.ndarray attention_weight,
+        core.ndarray w_q, core.ndarray w_k, core.ndarray w_v, bool training):
+    cdef int currIdx = -1
+    if not training:
+        currIdx = 0
+
+    handle = get_handle()
+    query = core._internal_ascontiguousarray(query)
+    q_desc = cudnn.createTensorDescriptor()
+    key = core._internal_ascontiguousarray(key)
+    k_desc = cudnn.createTensorDescriptor()
+    value = core._internal_ascontiguousarray(value)
+    v_desc = cudnn.createTensorDescriptor()
+    y_desc = cudnn.createTensorDescriptor()
+    attn_weight_desc = cudnn.createTensorDescriptor()
+
+    attn_desc = cudnn.createMultiHeadAttnDescriptor()
+
+    try:
+        _create_tensor_nd_descriptor(q_desc, query)
+        _create_tensor_nd_descriptor(k_desc, key)
+        _create_tensor_nd_descriptor(v_desc, value)
+        _create_tensor_nd_descriptor(y_desc, y)
+        _create_tensor_nd_descriptor(attn_weight_desc, attention_weight)
+
+        cudnn.multiHeadAttnForward(
+            handle, attn_desc, currIdx, loWinIdx, hiWinIdx, seqLengthArrayQRO,
+            seqLengthArrayKV, q_desc, query, NULL, k_desc, key, v_desc, value,
+            o_desc, out, weightSizeInBytes, w, workSpaceSizeInBytes, workSpace,
+            reserveSpaceSizeInBytes, reserveSpace)
+
+    finally:
+        cudnn.destroyTensorDescriptor(q_desc)
+        cudnn.destroyTensorDescriptor(k_desc)
+        cudnn.destroyTensorDescriptor(v_desc)
+        cudnn.destroyTensorDescriptor(v_desc)
+        cudnn.destroyAttnDescriptor(attn_desc)
