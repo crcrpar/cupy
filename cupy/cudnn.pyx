@@ -2109,24 +2109,35 @@ def batch_normalization_backward(
 
 
 # TODO(crcrpar): Implement MultiHeadAttention forward&backard.
-cdef _create_attn_descriptor(
-        size_t attnDesc, size_t queryMap, int nHeads, double smScaler,
+def _create_attn_descriptor(
+        size_t queryMap, int nHeads, double smScaler,
         size_t dataType, size_t computePrec, size_t mathType,
         size_t attnDropoutDesc, size_t postAttnDropoutDesc,
         int qSize, int kSize, int vSize,
         int qProjSize, int kProjSize, int vProjSize, int oProjSize,
-        int qoMaxLength, int kvMaxLength, int maxBatchSize, int maxBeamSize)
+        int qoMaxLength, int kvMaxLength, int maxBatchSize, int maxBeamSize):
+    attn_desc = cudnn.createMultiHeadAttnDescriptor()
+    cudnn.cudnnSetAttnDescriptor(
+        attn_desc.value, query_map, nHeads, smScaler,
+        cudnn_dtype, compute_prec, math_type,
+        attn_dropout_desc.value, post_dropout_desc.value,
+        qSize, kSize, vSize, qProjSize, kProjSize, vProjSize, oProjSize,
+        qoMaxLength, kvMaxLength, maxBatchSize, maxBeamSize)
+    return attn_desc
 
 
 def multiheadattention_forward(
         core.ndarray query, core.ndarray key, core.ndarray value,
         core.ndarray y, core.ndarray attention_weight,
-        core.ndarray w_q, core.ndarray w_k, core.ndarray w_v, bool training):
+        core.ndarray w_q, core.ndarray w_k, core.ndarray w_v,
+        float attention_dropout, float post_dropout, bool training,
+        double softmax_scaler=1.0, int beam_width=1, int query_mapping_mode=1):
     cdef int currIdx = -1
     if not training:
         currIdx = 0
 
     handle = get_handle()
+    cdef attnDescriptor attn_desc = _create_attn_descriptor()
     query = core._internal_ascontiguousarray(query)
     q_desc = cudnn.createTensorDescriptor()
     key = core._internal_ascontiguousarray(key)
@@ -2135,6 +2146,8 @@ def multiheadattention_forward(
     v_desc = cudnn.createTensorDescriptor()
     y_desc = cudnn.createTensorDescriptor()
     attn_weight_desc = cudnn.createTensorDescriptor()
+
+    dtype = _get_dtype_of_tensor_descriptor(q_desc)
 
     attn_desc = cudnn.createMultiHeadAttnDescriptor()
 
@@ -2146,9 +2159,14 @@ def multiheadattention_forward(
         _create_tensor_nd_descriptor(attn_weight_desc, attention_weight)
 
         cudnn.multiHeadAttnForward(
-            handle, attn_desc, currIdx, loWinIdx, hiWinIdx, seqLengthArrayQRO,
-            seqLengthArrayKV, q_desc, query, NULL, k_desc, key, v_desc, value,
-            o_desc, out, weightSizeInBytes, w, workSpaceSizeInBytes, workSpace,
+            handle, attn_desc.value, currIdx, loWinIdx, hiWinIdx,
+            seqLengthArrayQRO, seqLengthArrayKV,
+            q_desc.value, query.data.ptr,
+            NULL,
+            k_desc.value, key.data.ptr,
+            v_desc.value, value.data.ptr,
+            o_desc.value, out.data.ptr,
+            weightSizeInBytes, w, workSpaceSizeInBytes, workSpace,
             reserveSpaceSizeInBytes, reserveSpace)
 
     finally:

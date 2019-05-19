@@ -39,6 +39,7 @@ typedef enum {} cudnnTensorFormat_t;
 typedef enum {} cudnnErrQueryMode_t;
 typedef enum {} cudnnWgradMode_t;
 typedef struct cudnnRuntimeTag_t cudnnRuntimeTag_t;
+typedef struct cudnnAttnDescriptor_t;
 
 typedef void* cudnnConvolutionDescriptor_t;
 typedef void* cudnnSeqDataDescriptor_t;
