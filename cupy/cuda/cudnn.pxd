@@ -242,6 +242,25 @@ cpdef enum:
     CUDNN_SCALAR_DOUBLE_BN_EXP_AVG_FACTOR = 102
     CUDNN_SCALAR_DOUBLE_BN_EPSILON = 103
 
+    # cudnnMultiHeadAttnWeightKind_t
+    CUDNN_MH_ATTN_Q_WEIGHTS = 0
+    CUDNN_MH_ATTN_K_WEIGHTS = 1
+    CUDNN_MH_ATTN_V_WEIGHTS = 2
+    CUDNN_MH_ATTN_O_WEIGHTS = 3
+    CUDNN_MH_ATTN_Q_BIASES  = 4
+    CUDNN_MH_ATTN_K_BIASES  = 5
+    CUDNN_MH_ATTN_V_BIASES  = 6
+    CUDNN_MH_ATTN_O_BIASES  = 7
+
+    # cudnnWgradMode_t
+    CUDNN_WGRAD_MODE_ADD = 0
+    CUDNN_WGRAD_MODE_SET = 1
+
+    # cudnnSeqDataAxis_t
+    CUDNN_SEQDATA_TIME_DIM  = 0
+    CUDNN_SEQDATA_BATCH_DIM = 1
+    CUDNN_SEQDATA_BEAM_DIM  = 2
+    CUDNN_SEQDATA_VECT_DIM  = 3
 
 ###############################################################################
 # Class
@@ -774,3 +793,79 @@ cpdef createFusedOpsPlan(int ops)
 cpdef destroyFusedOpsPlan(size_t plan)
 cpdef makeFusedOpsPlan(size_t handle, size_t plan, size_t constPack)
 cpdef fusedOpsExecute(size_t handle, size_t plan, size_t varPack)
+
+###############################################################################
+# Multi-head Attention
+###############################################################################
+cpdef size_t createAttnDescriptor() except? 0
+cpdef destroyAttnDescriptor(size_t attnDesc)
+cpdef setAttnDescriptor(size_t attnDesc, size_t attnMode,
+                        int nHeads,
+                        double smScaler,
+                        size_t dataType,
+                        size_t computePrec,
+                        size_t mathType,
+                        size_t attnDropoutDesc, size_t postDropoutDesc,
+                        int qSize, int kSize, int vSize,
+                        int qProjSize, inv kProjSize, int vProjSize,
+                        int oProjSize,
+                        int qoMaxSeqLength, int kvMaxSeqLength,
+                        int maxBatchSize, int maxBeamSize)
+cpdef getAttnDescriptor(size_t attnDesc, size_t* attnMode,
+                        int* nHeads,
+                        size_t* dataType,
+                        size_t* computePrec,
+                        size_t* mathType,
+                        size_t* attnDropoutDesc, size_t* postDropoutDesc,
+                        int* qSize, int* kSize, int* vSize,
+                        int* qProjSize, int* kProjSize, int* vProjSize,
+                        int* oProjSize,
+                        int* qoMaxSeqLength, int* kvMaxSeqLength,
+                        int* maxBatchSize, int* maxBeamSize)
+cpdef getMultiHeadAttnBuffers(size_t handle,
+                              size_t attnDesc,
+                              size_t* weightSizeInBytes,
+                              size_t* workSpaceSizeInBytes,
+                              size_t* reserveSapceSizeInBytes)
+cpdef getMultiHeadAttnWeights(size_t handle,
+                              size_t attnDesc,
+                              size_t wKind,
+                              size_t weightSizeInBytes,
+                              void *weights,
+                              size_t wDesc,
+                              void **wAddr)
+cpdef multiHeadAttnForward(size_t handle, size_t attnDesc,
+                           int currIdx, int *loWinIdx, int *hiWinIdx,
+                           int *seqLenmgthArrayQRO, int *seqLengthArrayKV,
+                           size_t qDesc, void *queries,
+                           void *residuals,
+                           size_t kDesc, void *keys,
+                           size_t vDesc, void *values,
+                           size_t oDesc, void *out,
+                           size_t weightSizeInBytes, void *weights,
+                           size_t workSpaceSizeInBytes, void *workSpace,
+                           size_t reserveSpaceSizeInBytes, void *reserveSpace)
+cpdef multiHeadAttnBackwardData(size_t handle, size_t attndesc,
+                                int *loWinIdx, int *hiWinIdx,
+                                int *seqLengthArrayDQDO, int *seqLengthArrayDKDV,
+                                size_t doDesc, void *dout,
+                                size_t dqDesc, void *dqueries, void *queries,
+                                size_t dkDesc, void *dkeys, void *keys,
+                                size_t dvDesc, void *dvalues, void *values,
+                                size_t weightSizeInBytes, void *weights,
+                                size_t workSpaceSizeInBytes, void *workSpace,
+                                size_t reserveSpaceSizeInBytes, void *reserveSpace)
+
+cpdef size_t createSeqDataDescriptor() except? 0
+cpdef destroySeqDataDescriptor(size_t seqDataDesc)
+cpdef setSeqDataDescriptor(size_t seqDataDesc, size_t dataType,
+                           int nbDims, size_t dimA, size_t axes,
+                           size_t seqLengthArraySize, size_t seqLengthArray,
+                           void *paddingFill)
+cpdef getSeqDataDescriptor(size_t seqDataDesc, size_t *dataType,
+                           int *nbDims, int nbDimsRequested,
+                           size_t dimA, size_t axes,
+                           size_t *seqLengthArraySize,
+                           size_t seqLengthSizeRequested,
+                           size_t seqLengthArray,
+                           void *paddingfill)
