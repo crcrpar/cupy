@@ -58,7 +58,7 @@ cpdef enum:
 # Context
 ###############################################################################
 
-cpdef size_t create() except? 0
+cpdef intptr_t create() except? 0
 cpdef destroy(intptr_t handle)
 cpdef int getVersion(intptr_t handle) except? -1
 cpdef int getPointerMode(intptr_t handle) except? -1
